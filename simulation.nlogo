@@ -4,13 +4,14 @@ breed[requirements requirement]
 
 ;; Variables
 patches-own[fitness complexity isTouched language]
-developers-own[boredom-threshold experience master]
+developers-own[boredom-threshold experience master commit age active-day-nbr nothing-in-day]
 
 ;; Global variables
-globals[reduce-complexity add-complexity add-fitness]
+globals[reduce-complexity add-complexity add-fitness tmp]
 
 to setup
   ca
+  set tmp 0
   create-requirements 1 [set color green setxy 0 0 set size 1 set shape "circle"] ;; initial position 0 0
   ask patches [set pcolor white set fitness 0 set complexity 0 set isTouched false set language random nb-language]
   reset-ticks
@@ -33,7 +34,7 @@ to repaint
   ]
 end
 
-;; Appends new module in open source project 
+;; Appends new module in open source project
 to createModule
   ask patch-here [
     set fitness 1
@@ -49,19 +50,19 @@ to refractorModule[dev-experience]
     set complexity (complexity - dev-experience)
   ]
   [
-    set complexity 0 
+    set complexity 0
   ]
 end
 
 ;; Brings more complexity and fitness to modules where developpers are
 to developModule[dev-experience]
     set complexity (complexity + dev-experience)
-    
+
     ifelse (max-experience - dev-experience) <  random 100 [
       set fitness (fitness + dev-experience)
     ]
     [
-     set fitness (fitness - (max-experience - dev-experience)) 
+     set fitness (fitness - (max-experience - dev-experience))
     ]
 end
 
@@ -74,14 +75,14 @@ to work
   let did-something false
   let master-language master
   let dev-experience experience
-  
+
   ;; PERFORM BEHAVIOR
   ifelse count requirements-here > 0 [createModule] ;; behavior 1 -> create module on requirement
   [
     ask patch-here [ ;; module is created ?
       if isTouched and member? language master-language [
         ;; if the fitness is not too
-        ifelse (fitness > fitness-threshold and complexity > complexity-threshold) 
+        ifelse (fitness > fitness-threshold and complexity > complexity-threshold)
         [
           if (count neighbors with [count requirements-here > 0] > 0) [
             set did-something true
@@ -91,22 +92,26 @@ to work
         [
           ;; if the module is not to complex
           if(complexity < complexity-threshold) [
-            set did-something true 
+            set did-something true
             developModule dev-experience
           ] ;; behavior 3 -> developer increase module's complexity and fitness
         ]
       ]
     ]
   ]
-  
+
   ;; Developper bored ?
   ifelse did-something [
     if (experience + 1) < max-experience  [set experience (experience + 1)]
+    set commit (commit + 1)
+    if (nothing-in-day) [set active-day-nbr (active-day-nbr + 1) set nothing-in-day false]
+    if tmp = steps-by-day [set nothing-in-day true set age (age + 1)]
   ]
   [
     set boredom-threshold (boredom-threshold + 1)
+    if tmp = steps-by-day [set nothing-in-day true set age (age + 1)]
   ]
-  
+
   ;; MUST DIE ?
   dieOfBored
 end
@@ -115,21 +120,26 @@ end
 to evolve
   ask requirements [
     ask patch-here [
-      if ((random 100) < chance-dev and fitness < rate-boredom-threshold) [ ;;and (fitness < boredom-threshold) 
-        sprout-developers 1 [set color blue set size 3 set shape "Person" set boredom-threshold (random 2 + 1) set master n-values (nb-language / 4) [random nb-language] set experience 1]
+      if ((random 100) < chance-dev and fitness < rate-boredom-threshold) [ ;;and (fitness < boredom-threshold)
+        sprout-developers 1 [set color blue set size 3 set shape "Person" set boredom-threshold (random 2 + 1) set master n-values (nb-language / 4) [random nb-language] set experience 1 set commit 0 set age 0 set active-day-nbr 0 set nothing-in-day true]
       ]
     ]
   ]
-  
+
 
   ask patches with [isTouched] [
     if (((random 100) < 50) and (any? neighbors with [isTouched = false and ((count requirements-here) = 0)])) [
       if (count developers) < max-developer [
-        ask one-of (neighbors with [isTouched = false and ((count requirements-here) = 0)]) 
+        ask one-of (neighbors with [isTouched = false and ((count requirements-here) = 0)])
         [sprout-requirements 1 [set color green set size 1 set shape "circle"]]
       ]
     ]
   ]
+end
+
+to day ;; A day is represented by a number of steps
+  set tmp (tmp + 1)
+  if tmp = steps-by-day [set tmp 0]
 end
 
 ;; Run one simulation's step
@@ -137,6 +147,7 @@ to runceOnce
   evolve
   ask developers [work]
   ask developers [wiggle]
+  day
   repaint
   tick
 end
@@ -226,7 +237,7 @@ complexity-threshold
 complexity-threshold
 1
 max-complexity
-5
+4
 1
 1
 NIL
@@ -261,7 +272,7 @@ max-developer
 max-developer
 5
 200
-65
+100
 5
 1
 NIL
@@ -317,7 +328,7 @@ rate-boredom-threshold
 rate-boredom-threshold
 1
 50
-50
+47
 1
 1
 NIL
@@ -370,7 +381,7 @@ nb-language
 nb-language
 0
 50
-40
+50
 1
 1
 NIL
@@ -419,6 +430,75 @@ chance-dev
 1
 99
 18
+1
+1
+NIL
+HORIZONTAL
+
+PLOT
+738
+478
+1011
+663
+Commit
+NIL
+NIL
+0.0
+20.0
+0.0
+100.0
+true
+false
+"" ""
+PENS
+"pen-0" 1.0 1 -7500403 true "" "histogram [commit] of developers"
+
+PLOT
+1017
+479
+1301
+661
+Age
+NIL
+NIL
+0.0
+10.0
+0.0
+10.0
+true
+false
+"" ""
+PENS
+"default" 1.0 1 -16777216 true "" "histogram [age] of developers"
+
+PLOT
+3
+571
+244
+729
+Active day number
+NIL
+NIL
+0.0
+10.0
+0.0
+10.0
+true
+false
+"" ""
+PENS
+"default" 1.0 1 -16777216 true "" "histogram [active-day-nbr] of developers"
+
+SLIDER
+10
+523
+182
+556
+steps-by-day
+steps-by-day
+1
+5
+5
 1
 1
 NIL
@@ -767,7 +847,7 @@ Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 
 @#$#@#$#@
-NetLogo 5.1.0
+NetLogo 5.3
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
