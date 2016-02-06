@@ -102,8 +102,8 @@ to work
 
   ;; Developper bored ?
   ifelse did-something [
-    if (experience + 1) < max-experience  [set experience (experience + 1)]
     set commit (commit + 1)
+    if (experience + 1) < max-experience  [set experience (experience + 1)]
     if (nothing-in-day) [set active-day-nbr (active-day-nbr + 1) set nothing-in-day false]
     if tmp = steps-by-day [set nothing-in-day true set age (age + 1)]
   ]
@@ -381,7 +381,7 @@ nb-language
 nb-language
 0
 50
-50
+43
 1
 1
 NIL
@@ -440,7 +440,7 @@ PLOT
 478
 1011
 663
-Commit
+Commit RANK
 NIL
 NIL
 0.0
@@ -451,7 +451,7 @@ true
 false
 "" ""
 PENS
-"pen-0" 1.0 1 -7500403 true "" "histogram [commit] of developers"
+"commit" 1.0 1 -7500403 true "" "histogram-list developers"
 
 PLOT
 1017
@@ -498,11 +498,46 @@ steps-by-day
 steps-by-day
 1
 5
-5
+2
 1
 1
 NIL
 HORIZONTAL
+
+PLOT
+250
+669
+450
+819
+plot 1
+NIL
+NIL
+0.0
+10.0
+0.0
+10.0
+true
+false
+"" ""
+PENS
+
+PLOT
+464
+707
+1294
+857
+tmp
+NIL
+NIL
+0.0
+10.0
+0.0
+10.0
+true
+false
+"" ""
+PENS
+"tmp" 1.0 0 -16777216 true "" "plot tmp"
 
 @#$#@#$#@
 ## WHAT IS IT?
