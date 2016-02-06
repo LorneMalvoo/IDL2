@@ -105,11 +105,11 @@ to work
     set commit (commit + 1)
     if (experience + 1) < max-experience  [set experience (experience + 1)]
     if (nothing-in-day) [set active-day-nbr (active-day-nbr + 1) set nothing-in-day false]
-    if tmp = steps-by-day [set nothing-in-day true set age (age + 1)]
+    if tmp = steps-by-day - 1 [set nothing-in-day true set age (age + 1)]
   ]
   [
     set boredom-threshold (boredom-threshold + 1)
-    if tmp = steps-by-day [set nothing-in-day true set age (age + 1)]
+    if tmp = steps-by-day - 1 [set nothing-in-day true set age (age + 1)]
   ]
 
   ;; MUST DIE ?
@@ -429,7 +429,7 @@ chance-dev
 chance-dev
 1
 99
-18
+22
 1
 1
 NIL
@@ -446,19 +446,19 @@ NIL
 0.0
 20.0
 0.0
-100.0
+10.0
 true
 false
 "" ""
 PENS
-"commit" 1.0 1 -7500403 true "" "histogram-list developers"
+"commit" 1.0 1 -7500403 true "" "ask developers [\n  create-temporary-plot-pen (word who)\n  plot commit\n]"
 
 PLOT
 1017
 479
 1301
 661
-Age
+Age RANK
 NIL
 NIL
 0.0
@@ -469,14 +469,14 @@ true
 false
 "" ""
 PENS
-"default" 1.0 1 -16777216 true "" "histogram [age] of developers"
+"default" 1.0 1 -16777216 true "" "ask developers [\n  create-temporary-plot-pen (word who)\n  plot age\n]"
 
 PLOT
 3
 571
 244
 729
-Active day number
+Active day number RANK
 NIL
 NIL
 0.0
@@ -487,7 +487,7 @@ true
 false
 "" ""
 PENS
-"default" 1.0 1 -16777216 true "" "histogram [active-day-nbr] of developers"
+"default" 1.0 1 -16777216 true "" "ask developers [\n  create-temporary-plot-pen (word who)\n  plot active-day-nbr\n]"
 
 SLIDER
 10
@@ -498,28 +498,11 @@ steps-by-day
 steps-by-day
 1
 5
-2
+5
 1
 1
 NIL
 HORIZONTAL
-
-PLOT
-250
-669
-450
-819
-plot 1
-NIL
-NIL
-0.0
-10.0
-0.0
-10.0
-true
-false
-"" ""
-PENS
 
 PLOT
 464
