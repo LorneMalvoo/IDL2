@@ -4,7 +4,7 @@ breed[requirements requirement]
 
 ;; Variables
 patches-own[fitness complexity isTouched language]
-developers-own[boredom-threshold experience master commit age active-day-nbr nothing-in-day]
+developers-own[boredom-threshold experience master commit age active-day-nbr nothing-in-day first-dev]
 
 ;; Global variables
 globals[reduce-complexity add-complexity add-fitness tmp]
@@ -106,10 +106,12 @@ to work
     if (experience + 1) < max-experience  [set experience (experience + 1)]
     if (nothing-in-day) [set active-day-nbr (active-day-nbr + 1) set nothing-in-day false]
     if tmp = steps-by-day - 1 [set nothing-in-day true set age (age + 1)]
+    if (first-dev = false) [set first-dev true]
   ]
   [
     set boredom-threshold (boredom-threshold + 1)
-    if tmp = steps-by-day - 1 [set nothing-in-day true set age (age + 1)]
+    if tmp = steps-by-day - 1 [set nothing-in-day true]
+    if (first-dev) [if tmp = steps-by-day - 1 [set age (age + 1)]]
   ]
 
   ;; MUST DIE ?
@@ -121,7 +123,7 @@ to evolve
   ask requirements [
     ask patch-here [
       if ((random 100) < chance-dev and fitness < rate-boredom-threshold) [ ;;and (fitness < boredom-threshold)
-        sprout-developers 1 [set color blue set size 3 set shape "Person" set boredom-threshold (random 2 + 1) set master n-values (nb-language / 4) [random nb-language] set experience 1 set commit 0 set age 0 set active-day-nbr 0 set nothing-in-day true]
+        sprout-developers 1 [set color blue set size 3 set shape "Person" set boredom-threshold (random 2 + 1) set master n-values (nb-language / 4) [random nb-language] set experience 1 set commit 0 set age 0 set active-day-nbr 0 set nothing-in-day true set first-dev false]
       ]
     ]
   ]
@@ -272,7 +274,7 @@ max-developer
 max-developer
 5
 200
-100
+200
 5
 1
 NIL
@@ -381,7 +383,7 @@ nb-language
 nb-language
 0
 50
-43
+4
 1
 1
 NIL
@@ -429,24 +431,24 @@ chance-dev
 chance-dev
 1
 99
-22
+18
 1
 1
 NIL
 HORIZONTAL
 
 PLOT
-738
-478
-1011
-663
+377
+668
+788
+888
 Commit RANK
 NIL
 NIL
 0.0
 20.0
 0.0
-10.0
+15.0
 true
 false
 "" ""
@@ -454,17 +456,17 @@ PENS
 "commit" 1.0 1 -7500403 true "" "ask developers [\n  create-temporary-plot-pen (word who)\n  plot commit\n]"
 
 PLOT
-1017
-479
-1301
-661
+797
+668
+1175
+889
 Age RANK
 NIL
 NIL
 0.0
 10.0
 0.0
-10.0
+15.0
 true
 false
 "" ""
@@ -472,10 +474,10 @@ PENS
 "default" 1.0 1 -16777216 true "" "ask developers [\n  create-temporary-plot-pen (word who)\n  plot age\n]"
 
 PLOT
-3
-571
-244
-729
+5
+668
+371
+888
 Active day number RANK
 NIL
 NIL
@@ -498,29 +500,11 @@ steps-by-day
 steps-by-day
 1
 5
-5
+2
 1
 1
 NIL
 HORIZONTAL
-
-PLOT
-464
-707
-1294
-857
-tmp
-NIL
-NIL
-0.0
-10.0
-0.0
-10.0
-true
-false
-"" ""
-PENS
-"tmp" 1.0 0 -16777216 true "" "plot tmp"
 
 @#$#@#$#@
 ## WHAT IS IT?
