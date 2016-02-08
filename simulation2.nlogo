@@ -4,7 +4,7 @@ breed[requirements requirement]
 
 ;; Variables
 patches-own[fitness complexity isTouched language]
-developers-own[boredom-threshold experience master commit age active-day-nbr nothing-in-day teleportProbability]
+developers-own[boredom-threshold experience master commit age active-day-nbr nothing-in-day perseverance]
 
 ;; Global variables
 globals[reduce-complexity add-complexity add-fitness tmp]
@@ -19,7 +19,7 @@ end
 
 ;; Tells to turtles to move in a random direction
 to wiggle
-   ifelse teleportProbability > 95 [
+   ifelse perseverance >= perseverance-threshold [
     teleportToOnePatch
   ]
   [
@@ -73,7 +73,7 @@ end
 
 ;; Deletes an agent which is bored
 to dieOfBored
-  if boredom-threshold > rate-boredom-threshold and teleportProbability < 95 [die]
+  if boredom-threshold > rate-boredom-threshold and perseverance < perseverance-threshold [die]
 end
 
 to work
@@ -132,7 +132,7 @@ to evolve
   ask requirements [
     ask patch-here [
       if ((random 100) < chance-dev and fitness < rate-boredom-threshold) [ ;;and (fitness < boredom-threshold)
-        sprout-developers 1 [set color blue set size 3 set shape "Person" set boredom-threshold (random 2 + 1) set master n-values (nb-language / 4) [random nb-language] set experience 1 set commit 0 set age 0 set active-day-nbr 0 set nothing-in-day true set teleportProbability random 100]
+        sprout-developers 1 [set color blue set size 3 set shape "Person" set boredom-threshold (random 2 + 1) set master n-values (nb-language / 4) [random nb-language] set experience 1 set commit 0 set age 0 set active-day-nbr 0 set nothing-in-day true set perseverance random 100]
       ]
     ]
   ]
@@ -233,7 +233,7 @@ fitness-threshold
 fitness-threshold
 1
 max-fitness
-6
+10
 1
 1
 NIL
@@ -283,7 +283,7 @@ max-developer
 max-developer
 5
 200
-60
+200
 5
 1
 NIL
@@ -298,7 +298,7 @@ max-complexity
 max-complexity
 1
 10
-3
+10
 1
 1
 NIL
@@ -313,7 +313,7 @@ max-fitness
 max-fitness
 1
 10
-7
+10
 1
 1
 NIL
@@ -339,7 +339,7 @@ rate-boredom-threshold
 rate-boredom-threshold
 1
 50
-48
+38
 1
 1
 NIL
@@ -392,7 +392,7 @@ nb-language
 nb-language
 0
 50
-46
+9
 1
 1
 NIL
@@ -483,10 +483,10 @@ PENS
 "default" 1.0 1 -16777216 true "" "ask developers [\n  create-temporary-plot-pen (word who)\n  plot age\n]"
 
 PLOT
-3
-571
-244
-729
+25
+683
+266
+841
 Active day number RANK
 NIL
 NIL
@@ -532,6 +532,21 @@ false
 "" ""
 PENS
 "tmp" 1.0 0 -16777216 true "" "plot tmp"
+
+SLIDER
+14
+570
+196
+603
+perseverance-threshold
+perseverance-threshold
+0
+100
+100
+1
+1
+NIL
+HORIZONTAL
 
 @#$#@#$#@
 ## WHAT IS IT?
