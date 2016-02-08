@@ -19,7 +19,7 @@ end
 
 ;; Tells to turtles to move in a random direction
 to wiggle
-   ifelse random 99 < teleportProbability [
+   ifelse teleportProbability > 95 [
     teleportToOnePatch
   ]
   [
@@ -73,7 +73,7 @@ end
 
 ;; Deletes an agent which is bored
 to dieOfBored
-  if boredom-threshold > rate-boredom-threshold [die]
+  if boredom-threshold > rate-boredom-threshold and teleportProbability < 95 [die]
 end
 
 to work
@@ -122,8 +122,8 @@ to work
 end
 
 to teleportToOnePatch
-   if any? patches with [pcolor = grey] [
-      move-to one-of patches with [pcolor = grey]
+   if any? patches with [pcolor != white] [
+      move-to one-of patches with [pcolor != white]
    ]
 end
 
@@ -283,7 +283,7 @@ max-developer
 max-developer
 5
 200
-10
+60
 5
 1
 NIL
@@ -313,7 +313,7 @@ max-fitness
 max-fitness
 1
 10
-10
+7
 1
 1
 NIL
@@ -339,7 +339,7 @@ rate-boredom-threshold
 rate-boredom-threshold
 1
 50
-50
+48
 1
 1
 NIL
@@ -392,7 +392,7 @@ nb-language
 nb-language
 0
 50
-43
+46
 1
 1
 NIL
